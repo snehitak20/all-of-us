@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS employee_db;
-CREATE DATABASE employee_db; 
+DROP DATABASE IF EXISTS hogwarts_db;
+CREATE DATABASE hogwarts_db; 
 
-USE employee_db;
+USE hogwarts_db;
 
 CREATE TABLE department (
     id INT AUTO_INCREMENT PRIMARY KEY, 
@@ -22,13 +22,7 @@ CREATE TABLE employee (
     id INT AUTO_INCREMENT PRIMARY KEY, 
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
-    role_id INT NOT NULL, 
-    manager_id INT NOT NULL, 
-    FOREIGN KEY(role_id)
-        REFERENCES role(id)
-        ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (manager_id)
-        REFERENCES employee(id)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE,
+    role_id INT NOT NULL,
+    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roles(id) 
+    manager_id INT NOT NULL,
 );
