@@ -1,11 +1,11 @@
-require('dotenv').config();
+//require('dotenv').config();
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const figlet = require('figlet');
 
 // Create the connection to mySQL
-const db = mysql.createConnection(
+const connection = mysql.createConnection(
     {
       host: 'localhost',
       // MySQL username,
@@ -16,8 +16,21 @@ const db = mysql.createConnection(
     },
     console.log(`Connected to the hogwarts_db database.`)
 );
-
 // Connect to the database--> FIZ THIS LATE
+connection.connect((err) => {
+    if (err) throw err;
+    console.log(`connected as id ${connection.threadId}\n`);
+    figlet('HOGWARTS', function(err, data) {
+      if (err) {
+        console.log('ascii art not loaded');
+      } else {
+        console.log(data);
+      }  
+      startPrompt();
+    });
+  });
+  
+
 function startPrompt() {
     const startQuestion = [{
       type: "list",
@@ -77,3 +90,25 @@ function startPrompt() {
             console.error(err);
     });
 }
+
+const viewAll = (table) => {
+    let query;
+    if (table === "DEPARTMENT") {
+      query = `SELECT * FROM DEPARTMENT`;
+    } else if (table === "ROLE") {
+      query = `SELECT R.id AS id, title, salary, D.name AS department FROM ROLE AS R LEFT JOIN DEPARTMENT AS D ON R.department_id = D.id;`;
+    } else {
+      query = `SELECT E.id AS id, E.first_name AS first_name, E.last_name AS last_name, 
+      R.title AS role, D.name AS department, CONCAT(M.first_name, " ", M.last_name) AS manager
+      FROM EMPLOYEE AS E LEFT JOIN ROLE AS R ON E.role_id = R.id
+      LEFT JOIN DEPARTMENT AS D ON R.department_id = D.id
+      LEFT JOIN EMPLOYEE AS M ON E.manager_id = M.id;`;
+  
+    }
+    connection.query(query, (err, res) => {
+      if (err) throw err;
+      console.table(res);
+  
+      startPrompt();
+    });
+  };
