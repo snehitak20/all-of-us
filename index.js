@@ -128,6 +128,7 @@ const addNewDepartment = () => {
         connection.query(query, [response.name], (err, res) => {
             if (err) throw err;
             console.log(`Successfully inserted ${response.name} department at id ${res.insertId}`);
+            
             startPrompt();
         });
     })
@@ -141,7 +142,6 @@ const addNewRole = () => {
     const departments = [];
     connection.query("SELECT * FROM DEPARTMENT", (err, res) => {
         if (err) throw err;
-  
         res.forEach(dep => {
             let qObj = {
                 name: dep.name,
@@ -150,39 +150,180 @@ const addNewRole = () => {
             departments.push(qObj);
         });
   
-    // Question list to get arguments for making new roles
-    let questions = [
-        {
-          type: "input",
-          name: "title",
-          message: "What is the title of the new role?"
-        },
-        {
-          type: "input",
-          name: "salary",
-          message: "What is the salary of the new role?"
-        },
-        {
-          type: "list",
-          name: "department",
-          choices: departments,
-          message: "Which department is this role in?"
-        }
-    ];
+        // Question list to get arguments for making new roles
+        let questions = [
+            {
+                type: "input",
+                name: "title",
+                message: "What is the title of the new role?"
+            },
+            {
+                type: "input",
+                name: "salary",
+                message: "What is the salary of the new role?"
+            },
+            {
+                type: "list",
+                name: "department",
+                choices: departments,
+                message: "Which department is this role in?"
+            }
+        ];
   
-    inquirer.prompt(questions)
-    .then(response => {
-        const query = `INSERT INTO ROLE (title, salary, department_id) VALUES (?)`;
-            connection.query(query, [[response.title, response.salary, response.department]], (err, res) => {
-                if (err) throw err;
-                    console.log(`Successfully inserted ${response.title} role at id ${res.insertId}`);
-                startPrompt();
-            });
+        inquirer.prompt(questions)
+        .then(response => {
+            const query = `INSERT INTO ROLE (title, salary, department_id) VALUES (?)`;
+                connection.query(query, [[response.title, response.salary, response.department]], (err, res) => {
+                    if (err) throw err;
+                        console.log(`Successfully inserted ${response.title} role at id ${res.insertId}`);
+                    startPrompt();
+                });
         })
             
         .catch(err => {
             console.error(err);
         });
-        
+
     });
+};
+
+const addNewEmployee = () => {
+    // Gets all of the employee list to make choice of employee's manager
+    connection.query("SELECT * FROM EMPLOYEE", (err, emplRes) => {
+        if (err) throw err;
+        const employeeChoice = [
+            {
+                name: 'None',
+                value: 0
+            }
+        ]; 
+
+        // An employee can have NO manager
+        emplRes.forEach(({ first_name, last_name, id }) => {
+            employeeChoice.push({
+            name: first_name + " " + last_name,
+            value: id
+        });
+    });
+      
+    // Gets ALL of the roles to make choice of employee's role
+    connection.query("SELECT * FROM ROLE", (err, rolRes) => {
+        if (err) throw err;
+        const roleChoice = [];
+        rolRes.forEach(({ title, id }) => {
+            roleChoice.push ({
+                name: title,
+                value: id
+            });
+        });
+       
+    let questions = [
+          {
+            type: "input",
+            name: "first_name",
+            message: "What is the employee's first name?"
+          },
+          {
+            type: "input",
+            name: "last_name",
+            message: "What is the employee's last name?"
+          },
+          {
+            type: "list",
+            name: "role_id",
+            choices: roleChoice,
+            message: "What is the employee's role?"
+          },
+          {
+            type: "list",
+            name: "manager_id",
+            choices: employeeChoice,
+            message: "Who is the employee's manager? (Can be null)"
+          }
+    ]
+    
+    inquirer.prompt(questions)
+        .then(response => {
+            const query = `INSERT INTO EMPLOYEE (first_name, last_name, role_id, manager_id) VALUES (?)`;
+            let manager_id = response.manager_id !== 0? response.manager_id: null;
+
+            connection.query(query, [[response.first_name, response.last_name, response.role_id, manager_id]], (err, res) => {
+                if (err) throw err;
+                console.log(`successfully inserted employee ${response.first_name} ${response.last_name} with id ${res.insertId}`);
+              
+                startPrompt();
+            });
+        })
+          
+        .catch(err => {
+            console.error(err);
+        });
+    })
+});
+  
 }
+
+const updateRole = () => {
+    // Gets all of the employees
+    connection.query("SELECT * FROM EMPLOYEE", (err, emplRes) => {
+        if (err) throw err;
+        const employeeChoice = [];
+        emplRes.forEach(({ first_name, last_name, id }) => {
+            employeeChoice.push({
+                name: first_name + " " + last_name,
+                value: id
+        });
+    });
+      
+    // Gets all of the role list to make choice of employee's role
+    connection.query("SELECT * FROM ROLE", (err, rolRes) => {
+        if (err) throw err;
+        const roleChoice = [];
+        rolRes.forEach(({ title, id }) => {
+            roleChoice.push({
+                name: title,
+                value: id
+            });
+        });
+       
+        let questions = [
+          {
+            type: "list",
+            name: "id",
+            choices: employeeChoice,
+            message: "Who's role do you want to update?"
+          },
+          {
+            type: "list",
+            name: "role_id",
+            choices: roleChoice,
+            message: "What is the employee's new role?"
+          }
+        ]
+    
+        inquirer.prompt(questions)
+            .then(response => {
+                const query = `UPDATE EMPLOYEE SET ? WHERE ?? = ?;`;
+                connection.query(query, [
+                    {role_id: response.role_id},
+                    "id",
+                    response.id
+                ], (err, res) => {
+                if (err) throw err;
+              
+                console.log("successfully updated employee's role!");
+              
+                startPrompt();
+            });
+        })
+        
+        .catch(err => {
+            console.error(err);
+        });
+    })
+});
+  
+}
+
+
+  
