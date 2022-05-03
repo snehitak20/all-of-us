@@ -6,9 +6,10 @@ The goal of this project is to build an application from scratch that can manage
 
 The key to building this command line application are the Node.js module, Inquirer package, and MySQL. MySQL is used to create the actual database that is used for this application. Within the JavaScript file, the Inquirer package is used to prompt users through a series of questions based on which option they choose. 
 
-[!]
+[![Employee Tracker Gif](./assets/employeeTracker.gif)](https://drive.google.com/file/d/1tnu_8aTPj9XkgblnoUt6PpH9_3ITXr1i/view "video")
 ## Video
-[Link to video]()
+
+[Link to video](https://drive.google.com/file/d/1tnu_8aTPj9XkgblnoUt6PpH9_3ITXr1i/view)
 
 ## Usage
 

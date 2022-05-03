@@ -1,4 +1,4 @@
-//require('dotenv').config();
+// Dependencies 
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
@@ -16,7 +16,7 @@ const connection = mysql.createConnection(
     },
     console.log(`Connected to the hogwarts_db database.`)
 );
-// Connect to the database--> FIZ THIS LATE
+// Connect to the database
 connection.connect((err) => {
     if (err) throw err;
     console.log(`connected as id ${connection.threadId}\n`);
@@ -30,7 +30,7 @@ connection.connect((err) => {
     });
   });
   
-
+// The initial questions to start 
 function startPrompt() {
     const startQuestion = [{
       type: "list",
@@ -91,6 +91,7 @@ function startPrompt() {
     });
 }
 
+// Here, allows the choice to view to different tables 
 const viewAll = (table) => {
     let query;
     if (table === "DEPARTMENT") {
@@ -113,6 +114,7 @@ const viewAll = (table) => {
     });
 };
 
+// To add a new department 
 const addNewDepartment = () => { 
     let questions = [ 
         {
@@ -137,6 +139,7 @@ const addNewDepartment = () => {
     });
 };
 
+// To add a new role
 const addNewRole = () => {
     // Gets the list of all departments with department_id to make the choices object list for prompt question
     const departments = [];
@@ -187,6 +190,7 @@ const addNewRole = () => {
     });
 };
 
+// To add a new employee
 const addNewEmployee = () => {
     // Gets all of the employee list to make choice of employee's manager
     connection.query("SELECT * FROM EMPLOYEE", (err, emplRes) => {
@@ -263,6 +267,7 @@ const addNewEmployee = () => {
   
 }
 
+// To update a role
 const updateRole = () => {
     // Gets all of the employees
     connection.query("SELECT * FROM EMPLOYEE", (err, emplRes) => {
@@ -325,6 +330,7 @@ const updateRole = () => {
   
 }
 
+// To view employees by managers
 const viewEmployeeByManager =  () => {
     // Gets all of the employees 
     connection.query("SELECT * FROM EMPLOYEE", (err, emplRes) => {
@@ -381,7 +387,8 @@ const viewEmployeeByManager =  () => {
         }); 
     });
 }
-  
+
+// To update the employee manager
 const updateManager = ()=> {
     // Gets all of the employees
     connection.query("SELECT * FROM EMPLOYEE", (err, emplRes) => {
@@ -443,6 +450,7 @@ const updateManager = ()=> {
     });
 };
 
+// To delete a department
 const deleteDepartment = () => {
     const departments = [];
     connection.query("SELECT * FROM DEPARTMENT", (err, res) => {
@@ -483,7 +491,7 @@ const deleteDepartment = () => {
 };
 
 
-
+// To delete a role
 const deleteRole = () => {
     const departments = [];
     connection.query("SELECT * FROM ROLE", (err, res) => {
@@ -522,7 +530,8 @@ const deleteRole = () => {
     });
 });
 };
-  
+
+// To delete an employee
 const deleteEmployee = () => {
     connection.query("SELECT * FROM EMPLOYEE", (err, res) => {
         if (err) throw err;
@@ -560,7 +569,8 @@ const deleteEmployee = () => {
          });
     });
 };
-  
+
+// To view each department's budget
 const viewBudget = () => {
     connection.query("SELECT * FROM DEPARTMENT", (err, res) => {
         if (err) throw err;
@@ -597,4 +607,4 @@ const viewBudget = () => {
             console.error(err);
         });
     });
-  };
+};
