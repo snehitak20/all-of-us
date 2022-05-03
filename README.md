@@ -22,7 +22,7 @@ This is a command line application and must be used within Terminal.
 
 * JavaScript
     * Node.js (Inquirer package, Console.table)
-    * MySQL 
+* MySQL 
 
 ## Installation
 
