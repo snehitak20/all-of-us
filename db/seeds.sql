@@ -20,10 +20,9 @@ SELECT * FROM role;
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES  ("Albus", "Dumbledore", 3, NULL),
-    ("Minerva", "McGonogall", 3, 1),
+    ("Minerva", "McGonagall", 3, 1),
     ("Harry", "Potter", 1, 2),
     ("Hermione", "Granger", 1, 2),
     ("Luna", "Lovegood", 2, 1);
-
 
 SELECT * FROM employee;
