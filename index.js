@@ -578,7 +578,7 @@ const viewBudget = () => {
             type: "list",
             name: "id",
             choices: depChoice,
-            message: "which department's budget do you want to see?"
+            message: "Which department's budget do you want to see?"
             }
         ];
   
